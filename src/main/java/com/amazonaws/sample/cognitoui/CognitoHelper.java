@@ -27,6 +27,12 @@ import com.amazonaws.services.cognitoidentity.model.*;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.*;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
+import com.amazonaws.services.identitymanagement.model.AddUserToGroupRequest;
+import com.amazonaws.services.identitymanagement.model.AddUserToGroupResult;
+import com.amazonaws.services.identitymanagement.model.CreateUserRequest;
+import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
@@ -106,7 +112,7 @@ class CognitoHelper {
                 .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
                 .withRegion(Regions.fromName(REGION))
                 .build();
-
+        
         SignUpRequest signUpRequest = new SignUpRequest();
         signUpRequest.setClientId(CLIENTAPP_ID);
         signUpRequest.setUsername(username);
@@ -122,7 +128,7 @@ class CognitoHelper {
         attributeType1.setName("email");
         attributeType1.setValue(email);
         list.add(attributeType1);
-
+        
         signUpRequest.setUserAttributes(list);
 
         try {
@@ -328,4 +334,56 @@ class CognitoHelper {
         }
         return bucketslist.toString();
     }
+	
+	public boolean adminCreateUser(String adminUsername, String adminPassword, String username, String password, String email, String phonenumber) {
+		AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "");
+		String token = helper.PerformSRPAuthentication(adminUsername, adminPassword);
+		System.out.println("token: " + token);
+		
+		final AmazonIdentityManagement iam =
+				AmazonIdentityManagementClientBuilder.standard().
+						withRegion("us-east-1").
+						build();
+		
+		CreateUserRequest request = new CreateUserRequest()
+				.withUserName(username);
+		
+		BasicSessionCredentials basicSessCreds = new BasicSessionCredentials("AKIAIVJ6JL2AQDN5IJ6A",
+				"dSGwWmIPDobaG7POQNYzYKrGaQoxhbSO7i0zh0ey", token);
+		AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+		AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+				.standard()
+				.withCredentials(new AWSStaticCredentialsProvider(basicSessCreds))
+				.withRegion(Regions.fromName(REGION))
+				.build();
+
+		AdminCreateUserRequest createUserRequest = new AdminCreateUserRequest();
+		createUserRequest.setUsername(username);
+		createUserRequest.setTemporaryPassword(password);
+		createUserRequest.setUserPoolId(POOL_ID);
+
+
+		List<AttributeType> list = new ArrayList<>();
+
+		AttributeType attributeType = new AttributeType();
+		attributeType.setName("phone_number");
+		attributeType.setValue(phonenumber);
+		list.add(attributeType);
+
+		AttributeType attributeType1 = new AttributeType();
+		attributeType1.setName("email");
+		attributeType1.setValue(email);
+		list.add(attributeType1);
+
+		createUserRequest.setUserAttributes(list);
+
+		try {
+			AdminCreateUserResult result = cognitoIdentityProvider.adminCreateUser(createUserRequest);
+			System.out.println(result);
+		} catch (Exception e) {
+			System.out.println(e);
+			return false;
+		}
+		return true;
+	}
 }

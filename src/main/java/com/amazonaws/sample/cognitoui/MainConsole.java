@@ -34,14 +34,14 @@ public class MainConsole {
         System.out.println("Welcome to the Cognito Sample. Please enter your choice (1 or 2).\n" +
                 "1. Add a new user\n" +
                 "2. Authenticate a user and display its buckets\n" +
-                "3. Reset password" +
-                "");
+                "3. Reset password\n" +
+		        "4. Add new user as someone else");
         int choice = 0;
         Scanner scanner = new Scanner(System.in);
         try {
             choice = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException exp) {
-            System.out.println("Please enter a choice (1, 2, 3).");
+            System.out.println("Please enter a choice (1, 2, 3, 4).");
             System.exit(1);
         }
         switch (choice) {
@@ -54,12 +54,40 @@ public class MainConsole {
             case 3:
                 ResetPassword(helper);
                 break;
+	        case 4:
+	        	adminCreateUser(helper);
+	        	break;
             default:
-                System.out.println("Valid choices are 1, 2, 3.");
+                System.out.println("Valid choices are 1, 2, 3, 4.");
         }
     }
-
-    /**
+	
+	private static void adminCreateUser(CognitoHelper helper) {
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("Please enter admin username: ");
+		String adminUsername = scanner.nextLine();
+		
+		System.out.println("Please enter admin password: ");
+		String adminPassword = scanner.nextLine();
+		
+		System.out.println("Please enter a username: ");
+		String username = scanner.nextLine();
+		
+		System.out.println("Please enter a password: ");
+		String password = scanner.nextLine();
+		
+		System.out.println("Please enter an email: ");
+		String email = scanner.nextLine();
+		
+		System.out.println("Please enter a phone number (+11234567890): ");
+		String phonenumber = scanner.nextLine();
+		
+		boolean success = helper.adminCreateUser(adminUsername, adminPassword, username, password, email, phonenumber);
+		
+	}
+	
+	/**
      * This method creates the users.
      *
      * @param helper CognitoHelper class for performing validations
@@ -116,8 +144,8 @@ public class MainConsole {
         JSONObject payload = CognitoJWTParser.getPayload(result);
         String provider = payload.get("iss").toString().replace("https://", "");
 
-        Credentials credentials = helper.GetCredentials(provider, result);
-        ListBuckets(credentials);
+//        Credentials credentials = helper.GetCredentials(provider, result);
+//        ListBuckets(credentials);
     }
 
 
