@@ -1,5 +1,16 @@
 package com.amazonaws.sample.cognitoui;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import org.json.JSONObject;
+
 /*
  *  Copyright 2013-2016 Amazon.com,
  *  Inc. or its affiliates. All Rights Reserved.
@@ -19,29 +30,37 @@ package com.amazonaws.sample.cognitoui;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentity;
 import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentityClientBuilder;
-import com.amazonaws.services.cognitoidentity.model.*;
+import com.amazonaws.services.cognitoidentity.model.Credentials;
+import com.amazonaws.services.cognitoidentity.model.GetCredentialsForIdentityRequest;
+import com.amazonaws.services.cognitoidentity.model.GetCredentialsForIdentityResult;
+import com.amazonaws.services.cognitoidentity.model.GetIdRequest;
+import com.amazonaws.services.cognitoidentity.model.GetIdResult;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
-import com.amazonaws.services.cognitoidp.model.*;
+import com.amazonaws.services.cognitoidp.model.AdminCreateUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminCreateUserResult;
+import com.amazonaws.services.cognitoidp.model.AdminDeleteUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminDeleteUserResult;
+import com.amazonaws.services.cognitoidp.model.AttributeType;
+import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
+import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
+import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
+import com.amazonaws.services.cognitoidp.model.ConfirmSignUpResult;
+import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
+import com.amazonaws.services.cognitoidp.model.ForgotPasswordResult;
+import com.amazonaws.services.cognitoidp.model.SignUpRequest;
+import com.amazonaws.services.cognitoidp.model.SignUpResult;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
-import com.amazonaws.services.identitymanagement.model.AddUserToGroupRequest;
-import com.amazonaws.services.identitymanagement.model.AddUserToGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserRequest;
-import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.*;
 
 /**
  * The CognitoHelper class abstracts the functionality of connecting to the Cognito user pool and Federated Identities.
@@ -385,5 +404,30 @@ class CognitoHelper {
 			return false;
 		}
 		return true;
+	}
+	
+	public boolean adminDeleteUser(String username) {
+		BasicAWSCredentials basicSessCreds = new BasicAWSCredentials("AKIAIVJ6JL2AQDN5IJ6A",
+				"dSGwWmIPDobaG7POQNYzYKrGaQoxhbSO7i0zh0ey");
+		AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+				.standard()
+				.withCredentials(new AWSStaticCredentialsProvider(basicSessCreds))
+				.withRegion(Regions.fromName(REGION))
+				.build();
+
+		AdminDeleteUserRequest adminDeleteUserRequest = new AdminDeleteUserRequest();
+		adminDeleteUserRequest.setUsername(username);
+		adminDeleteUserRequest.setUserPoolId(POOL_ID);
+
+		try {
+			AdminDeleteUserResult result = cognitoIdentityProvider.adminDeleteUser(adminDeleteUserRequest);
+			System.out.println(result);
+		} catch (Exception e) {
+			System.out.println(e);
+			return false;
+		}
+
+		return true;
+
 	}
 }
