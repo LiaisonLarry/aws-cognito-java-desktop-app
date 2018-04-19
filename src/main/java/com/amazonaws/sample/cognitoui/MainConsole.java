@@ -35,13 +35,14 @@ public class MainConsole {
                 "1. Add a new user\n" +
                 "2. Authenticate a user and display its buckets\n" +
                 "3. Reset password\n" +
-		        "4. Add new user as someone else");
+		        "4. Add new user as someone else\n" +
+		        "5. Delete user as someone else (admin credentials)");
         int choice = 0;
         Scanner scanner = new Scanner(System.in);
         try {
             choice = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException exp) {
-            System.out.println("Please enter a choice (1, 2, 3, 4).");
+            System.out.println("Please enter a choice (1, 2, 3, 4, 5).");
             System.exit(1);
         }
         switch (choice) {
@@ -56,6 +57,9 @@ public class MainConsole {
                 break;
 	        case 4:
 	        	adminCreateUser(helper);
+	        	break;
+	        case 5:
+	        	adminDeleteUser(helper);
 	        	break;
             default:
                 System.out.println("Valid choices are 1, 2, 3, 4.");
@@ -85,6 +89,20 @@ public class MainConsole {
 		
 		boolean success = helper.adminCreateUser(adminUsername, adminPassword, username, password, email, phonenumber);
 		
+	}
+	
+	private static void adminDeleteUser(CognitoHelper helper) {
+		Scanner scanner = new Scanner(System.in);
+				
+		System.out.println("Please enter a username for deletion: ");
+		String username = scanner.nextLine();
+		
+		boolean success = helper.adminDeleteUser(username);
+        if (success) {
+            System.out.println("User deleted.");
+        } else {
+            System.out.println("User deletion failed.");
+        }
 	}
 	
 	/**
