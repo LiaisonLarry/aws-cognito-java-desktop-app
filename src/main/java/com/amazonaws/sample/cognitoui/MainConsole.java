@@ -36,13 +36,14 @@ public class MainConsole {
                 "2. Authenticate a user and display its buckets\n" +
                 "3. Reset password\n" +
 		        "4. Add new user as someone else\n" +
-		        "5. Delete user as someone else (admin credentials)");
+		        "5. Delete user as someone else (admin credentials)\n" +
+		        "6. Read user attributes as someone else (admin credentials)");
         int choice = 0;
         Scanner scanner = new Scanner(System.in);
         try {
             choice = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException exp) {
-            System.out.println("Please enter a choice (1, 2, 3, 4, 5).");
+            System.out.println("Please enter a choice (1, 2, 3, 4, 5, 6).");
             System.exit(1);
         }
         switch (choice) {
@@ -61,8 +62,11 @@ public class MainConsole {
 	        case 5:
 	        	adminDeleteUser(helper);
 	        	break;
+	        case 6:
+	        	adminGetUser(helper);
+	        	break;
             default:
-                System.out.println("Valid choices are 1, 2, 3, 4.");
+                System.out.println("Valid choices are 1, 2, 3, 4, 5, 6.");
         }
     }
 	
@@ -102,6 +106,20 @@ public class MainConsole {
             System.out.println("User deleted.");
         } else {
             System.out.println("User deletion failed.");
+        }
+	}
+	
+	private static void adminGetUser(CognitoHelper helper) {
+		Scanner scanner = new Scanner(System.in);
+				
+		System.out.println("Please enter a username to query: ");
+		String username = scanner.nextLine();
+		
+		boolean success = helper.adminGetUser(username);
+        if (success) {
+            System.out.println("User queried.");
+        } else {
+            System.out.println("User query failed.");
         }
 	}
 	
