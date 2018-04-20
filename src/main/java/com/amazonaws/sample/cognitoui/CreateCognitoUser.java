@@ -14,6 +14,7 @@ import java.util.Properties;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.AdminCreateUserRequest;
@@ -75,8 +76,7 @@ public class CreateCognitoUser {
 		
 		AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 				.standard()
-				.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("AKIAIVJ6JL2AQDN5IJ6A",
-						"dSGwWmIPDobaG7POQNYzYKrGaQoxhbSO7i0zh0ey")))
+				.withCredentials(new DefaultAWSCredentialsProviderChain())
 				.withRegion(REGION)
 				.build();
 		

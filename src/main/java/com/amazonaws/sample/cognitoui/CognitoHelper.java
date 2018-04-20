@@ -32,6 +32,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentity;
 import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentityClientBuilder;
@@ -367,12 +368,9 @@ class CognitoHelper {
 		CreateUserRequest request = new CreateUserRequest()
 				.withUserName(username);
 		
-		BasicSessionCredentials basicSessCreds = new BasicSessionCredentials("AKIAIVJ6JL2AQDN5IJ6A",
-				"dSGwWmIPDobaG7POQNYzYKrGaQoxhbSO7i0zh0ey", token);
-		AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
 		AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 				.standard()
-				.withCredentials(new AWSStaticCredentialsProvider(basicSessCreds))
+				.withCredentials(new DefaultAWSCredentialsProviderChain())
 				.withRegion(Regions.fromName(REGION))
 				.build();
 
@@ -407,11 +405,9 @@ class CognitoHelper {
 	}
 	
 	public boolean adminDeleteUser(String username) {
-		BasicAWSCredentials basicSessCreds = new BasicAWSCredentials("AKIAIVJ6JL2AQDN5IJ6A",
-				"dSGwWmIPDobaG7POQNYzYKrGaQoxhbSO7i0zh0ey");
 		AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 				.standard()
-				.withCredentials(new AWSStaticCredentialsProvider(basicSessCreds))
+				.withCredentials(new DefaultAWSCredentialsProviderChain())
 				.withRegion(Regions.fromName(REGION))
 				.build();
 
