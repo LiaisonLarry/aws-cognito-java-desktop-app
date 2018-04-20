@@ -47,6 +47,8 @@ import com.amazonaws.services.cognitoidp.model.AdminCreateUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminCreateUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminDeleteUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminDeleteUserResult;
+import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
@@ -425,5 +427,29 @@ class CognitoHelper {
 
 		return true;
 
+	}
+	
+	public boolean adminGetUser(String username) {
+		BasicAWSCredentials basicSessCreds = new BasicAWSCredentials("AKIAIVJ6JL2AQDN5IJ6A",
+				"dSGwWmIPDobaG7POQNYzYKrGaQoxhbSO7i0zh0ey");
+		AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+				.standard()
+				.withCredentials(new AWSStaticCredentialsProvider(basicSessCreds))
+				.withRegion(Regions.fromName(REGION))
+				.build();
+
+		AdminGetUserRequest adminGetUserRequest = new AdminGetUserRequest();
+		adminGetUserRequest.setUsername(username);
+		adminGetUserRequest.setUserPoolId(POOL_ID);
+
+		try {
+			AdminGetUserResult result = cognitoIdentityProvider.adminGetUser(adminGetUserRequest);
+			System.out.println(result);
+		} catch (Exception e) {
+			System.out.println(e);
+			return false;
+		}
+
+		return true;
 	}
 }
