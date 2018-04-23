@@ -70,14 +70,10 @@ public class CreateCognitoUser {
 	}
 	
 	private void createCognitoUser() {
-//		AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "");
-//		String token = helper.PerformSRPAuthentication("sophas-user-4", "password4321");
-//		System.out.println("token: " + token);
 		
 		AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 				.standard()
 				.withCredentials(new DefaultAWSCredentialsProviderChain())
-				.withRegion(REGION)
 				.build();
 		
 		AdminCreateUserRequest createUserRequest = new AdminCreateUserRequest();
